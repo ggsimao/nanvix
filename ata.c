@@ -944,6 +944,7 @@ PRIVATE void ata_handler(int atadevid)
         if(!(req->flags & REQ_SYNC)){
             buffer_valid(req->u.buffered.buf, 1);
             buffer_dirty(req->u.buffered.buf, 0);
+            brelse(req->u.buffered.buf);
         }
 	}
 

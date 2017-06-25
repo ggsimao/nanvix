@@ -282,21 +282,27 @@ PUBLIC int dir_add(struct inode *dinode, struct inode *inode, const char *name)
  */
 PUBLIC ssize_t file_read(struct inode *i, void *buf, size_t n, off_t off)
 {
-	char *p;             /* Writing pointer.      */
-	size_t blkoff;       /* Block offset.         */
-	size_t chunk;        /* Data chunk size.      */
-	block_t blk;         /* Working block number. */
-	struct buffer *bbuf; /* Working block buffer. */
+	char *p;             /* Writing pointer.           */
+	size_t blkoff;       /* Block offset.              */
+	size_t chunk;        /* Data chunk size.           */
+	block_t blk;         /* Working block number.      */
+	block_t pfblk;		 /* Block used in prefetching. */
+	struct buffer *bbuf; /* Working block buffer.      */
 	p = buf;
 	inode_lock(i);
+	
+	int pfoff;
 
 	/* Read data. */
 	do
 	{
         blk = block_map(i, off, 0);
+        pfoff = off - BLOCK_SIZE;
+        if (pfoff < 0) pfoff = 0;
+        pfblk = block_map(i, pfoff, 0);
         
         if (curr_proc->last_dev == i->dev && 
-			curr_proc->last_num + 1 == blk) {
+			curr_proc->last_num == pfblk) {
 			if(curr_proc->pfsmc < 5) curr_proc->pfsmc++;
 			if(curr_proc->pfsmc >= 5) curr_proc->pfact = 1;
 			curr_proc->last_num = blk;
@@ -312,6 +318,14 @@ PUBLIC ssize_t file_read(struct inode *i, void *buf, size_t n, off_t off)
     		goto out;
 
     	bbuf = bread(i->dev, blk);
+    	
+    	if (curr_proc->pfact == 1) {
+			for (int pfn = 1; pfn <= 10; pfn++) {
+				pfblk = block_map(i, off + pfn * BLOCK_SIZE, 0);
+				if (pfblk == BLOCK_NULL) break;
+				abread(i->dev, pfblk);
+			}
+		}
 
     	blkoff = off % BLOCK_SIZE;
 
