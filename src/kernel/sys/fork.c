@@ -154,6 +154,12 @@ found:
 	proc->alarm = 0;
 	proc->next = NULL;
 	proc->chain = NULL;
+	
+	proc->pfsmc = 0;
+	proc->last_dev = -1;
+	proc->last_num = -1;
+	proc->pfact = 0;
+	
 	sched(proc);
 
 	curr_proc->nchildren++;
