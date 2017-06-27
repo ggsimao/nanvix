@@ -205,6 +205,16 @@
 		struct process *next;    /**< Next process in a list. */
 		struct process **chain;  /**< Sleeping chain.         */
 		/**@}*/
+		
+	/**
+	 * @name Prefetching utilities
+	 */
+		/**@{*/
+		int pfsmc;				 /**< Prefetching state machine counter. */
+		dev_t last_dev;		 /**< Last device read.				 	    */
+		block_t last_num;	 /**< Last block read.						    */
+		int pfact;				 /**< Prefetching is active.				    */
+		/**@}*/
 	};
 	
 	/* Forward definitions. */
