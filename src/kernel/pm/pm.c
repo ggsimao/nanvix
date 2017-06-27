@@ -121,6 +121,11 @@ PUBLIC void pm_init(void)
 	IDLE->next = NULL;
 	IDLE->chain = NULL;
 	
+	IDLE->pfsmc = 0;
+	IDLE->last_dev = -1;
+	IDLE->last_num = -1;
+	IDLE->pfact = 0;
+	
 	nprocs++;
 
 	enable_interrupts();
