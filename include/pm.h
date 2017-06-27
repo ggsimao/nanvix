@@ -206,9 +206,9 @@
 		struct process **chain;  /**< Sleeping chain.         */
 		/**@}*/
 		
-		/**
-		 * @name Prefetching utilities
-		 */
+	/**
+	 * @name Prefetching utilities
+	 */
 		/**@{*/
 		int pfsmc;				 /**< Prefetching state machine counter. */
 		dev_t last_dev;			 /**< Last device read.					 */
